@@ -48,6 +48,7 @@ conda activate {your_env}
 📝 To run the app after activating the environment:
 streamlit run app.py
 ```
+else, please kindly reach out to auva/chris for helping to solve your error 😁 🙏
 
 ## Run the App
 After running the setup script, activate the environment and start the application:
