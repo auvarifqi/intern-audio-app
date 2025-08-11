@@ -22,7 +22,7 @@ First, clone this repository to your local laptop:
 
 ```bash
 git clone https://github.com/auvarifqi/intern-audio-app.git
-cd audio_app
+cd intern-audio_app
 ```
 
 ### Automated Setup (Recommended)
@@ -35,6 +35,7 @@ chmod +x setup.sh
 # Run the setup script
 ./setup.sh
 ```
+You will be prompted to fill the virtual environment, please follow the prompt.
 
 On Windows, you can use Git Bash or WSL to run the script. Example: `bash setup.sh` or `./setup.sh` in Git Bash.
 
@@ -47,7 +48,7 @@ source venv/bin/activate  # On macOS/Linux
 # or
 venv\Scripts\activate     # On Windows
 # or if using Conda
-conda activate audio_app  # If you created a conda environment
+conda activate {your_env}  # If you created a conda environment
 
 # Run the application
 streamlit run app.py
