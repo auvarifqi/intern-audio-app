@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import re
 import streamlit.components.v1 as components
-from audio_recorder_streamlit import audio_recorder
+from audiorecorder import audiorecorder
 from device_selector import device_selector
 
 def extract_date_from_filename(filename):
@@ -254,28 +254,25 @@ def main():
         
         # Audio recording widget
         st.write("🎙️ **Click to start/stop recording:**")
-        audio_bytes = audio_recorder(
-            text="Click to record",
-            recording_color="#e74c3c",
-            neutral_color="#34495e",
-            icon_name="microphone",
-            icon_size="2x",
-        )
+        audio = audiorecorder("Start recording", "Stop recording", show_visualizer=True,
+            custom_style={'color': '#34495e'},
+            start_style={'backgroundColor': '#34495e', 'color': 'white'},
+            stop_style={'backgroundColor': '#e74c3c', 'color': 'white'})
         
-        # Always show audio when it's recorded
-        if audio_bytes:
-            st.audio(audio_bytes, format="audio/wav")
+        # Show audio when it's recorded
+        if len(audio) > 0:
+            # Display the recorded audio
+            st.audio(audio.export().read(), format="audio/wav")
             
             # Save button
             if st.button("💾 Save Recording & Continue", type="primary"):
                 try:
                     # Save audio file
-                    audio_filename = f"{current}.m4a"
+                    audio_filename = f"{current}.wav"
                     audio_path = os.path.join(st.session_state.date_folder, audio_filename)
                     
-                    # Write audio bytes to file
-                    with open(audio_path, "wb") as f:
-                        f.write(audio_bytes)
+                    # Export and save audio
+                    audio.export(audio_path, format="wav")
                     
                     st.success(f"✅ Saved: {audio_filename}")
                     
