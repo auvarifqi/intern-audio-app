@@ -61,6 +61,32 @@ def get_csv_files():
     csv_files = list(csvs_folder.glob("*.csv"))
     return [f.name for f in csv_files]
 
+def save_csv_changes(csv_path, transcriptions, transcription_col):
+    """
+    Save modified transcriptions back to CSV file
+    """
+    try:
+        # Read original CSV to preserve other columns
+        df = pd.read_csv(csv_path)
+        # Update the transcription column
+        df[transcription_col] = transcriptions + [None] * (len(df) - len(transcriptions))
+        # Save back to CSV
+        df.to_csv(csv_path, index=False)
+        return True
+    except Exception as e:
+        st.error(f"❌ Error saving CSV: {str(e)}")
+        return False
+    """
+    Get all CSV files from the csvs folder
+    """
+    csvs_folder = Path("csvs")
+    if not csvs_folder.exists():
+        csvs_folder.mkdir(exist_ok=True)
+        return []
+    
+    csv_files = list(csvs_folder.glob("*.csv"))
+    return [f.name for f in csv_files]
+
 def main():
     st.title("🎙️ Intern Audio Recording App")
     st.markdown("Put your CSV file in the `csvs/` folder and select it below!")
@@ -76,6 +102,10 @@ def main():
         st.session_state.csv_loaded = False
     if 'selected_csv' not in st.session_state:
         st.session_state.selected_csv = None
+    if 'transcription_col' not in st.session_state:
+        st.session_state.transcription_col = None
+    if 'audio_saved' not in st.session_state:
+        st.session_state.audio_saved = False
 
     # Step 1: CSV Selection
     st.header("📁 Step 1: Select CSV File")
@@ -129,8 +159,10 @@ def main():
             
             # Store transcriptions in session state
             st.session_state.transcriptions = df[transcription_col].dropna().tolist()
+            st.session_state.transcription_col = transcription_col
             st.session_state.date_folder = create_audio_folder(date)
             st.session_state.csv_loaded = True
+            st.session_state.audio_saved = False  # Reset audio state for new CSV
             
             # Check for existing recordings to resume
             next_number = get_next_audio_number(st.session_state.date_folder)
@@ -156,14 +188,14 @@ def main():
         # Progress bar
         progress = (st.session_state.current_index) / total
         st.progress(progress)
-        st.write(f"**Progress: {len([f for f in os.listdir(st.session_state.date_folder) if f.endswith('.m4a')])}/{total} completed**")
+        st.write(f"**Progress: {st.session_state.current_index}/{total} completed**")
         
         # Check if all recordings are done
         if st.session_state.current_index >= total:
             st.success("🎉 All recordings completed!")
             st.balloons()
             if st.button("🔄 Reset to start over"):
-                for key in ['transcriptions', 'current_index', 'date_folder', 'csv_loaded', 'selected_csv']:
+                for key in ['transcriptions', 'current_index', 'date_folder', 'csv_loaded', 'selected_csv', 'transcription_col', 'audio_saved']:
                     if key in st.session_state:
                         del st.session_state[key]
                 st.rerun()
@@ -173,8 +205,31 @@ def main():
         current_text = st.session_state.transcriptions[st.session_state.current_index]
         st.subheader(f"Recording #{current}")
         
+        # Editable transcription text
+        st.write("📝 **Edit transcription if needed:**")
+        edited_text = st.text_area(
+            "Transcription text:",
+            value=current_text,
+            height=100,
+            help="You can modify this text before recording. Changes will be saved to CSV."
+        )
+        
+        # Save text changes to CSV
+        if edited_text != current_text:
+            col1, col2 = st.columns([1, 4])
+            with col1:
+                if st.button("💾 Save Text"):
+                    # Update transcriptions in session state
+                    st.session_state.transcriptions[st.session_state.current_index] = edited_text
+                    
+                    # Save to CSV file
+                    csv_path = Path("csvs") / st.session_state.selected_csv
+                    if save_csv_changes(csv_path, st.session_state.transcriptions, st.session_state.transcription_col):
+                        st.success("✅ Text saved to CSV!")
+                        st.rerun()
+        
         # Display transcription in a nice box
-        st.info(f"📝 **Read this text:**\n\n{current_text}")
+        st.info(f"📝 **Read this text:**\n\n{edited_text}")
         
         # Audio recording widget
         st.write("🎙️ **Click to start/stop recording:**")
@@ -186,7 +241,7 @@ def main():
             icon_size="2x",
         )
         
-        # When audio is recorded
+        # Always show audio when it's recorded
         if audio_bytes:
             st.audio(audio_bytes, format="audio/wav")
             
@@ -211,6 +266,8 @@ def main():
                     
                 except Exception as e:
                     st.error(f"❌ Error saving audio: {str(e)}")
+        else:
+            st.info("🎤 Click the microphone to start recording.")
         
         # Navigation buttons
         col1, col2, col3 = st.columns(3)
@@ -227,7 +284,7 @@ def main():
                 
         with col3:
             if st.button("🔄 Reset App"):
-                for key in ['transcriptions', 'current_index', 'date_folder', 'csv_loaded', 'selected_csv']:
+                for key in ['transcriptions', 'current_index', 'date_folder', 'csv_loaded', 'selected_csv', 'transcription_col']:
                     if key in st.session_state:
                         del st.session_state[key]
                 st.rerun()
@@ -241,7 +298,7 @@ def main():
             st.write(f"**Date:** {os.path.basename(st.session_state.date_folder)}")
             st.write(f"**Audio Folder:** {st.session_state.date_folder}")
             st.write(f"**Total Transcriptions:** {len(st.session_state.transcriptions)}")
-            st.write(f"**Completed:** {len([f for f in os.listdir(st.session_state.date_folder) if f.endswith('.m4a')])}")            
+            st.write(f"**Completed:** {st.session_state.current_index}")
             st.write(f"**Remaining:** {len(st.session_state.transcriptions) - st.session_state.current_index}")
         else:
             st.write("Put CSV in `csvs/` folder and select it!")
