@@ -3,7 +3,9 @@ import pandas as pd
 import os
 from pathlib import Path
 import re
+import streamlit.components.v1 as components
 from audio_recorder_streamlit import audio_recorder
+from device_selector import device_selector
 
 def extract_date_from_filename(filename):
     """
@@ -86,6 +88,7 @@ def save_csv_changes(csv_path, transcriptions, transcription_col):
     
     csv_files = list(csvs_folder.glob("*.csv"))
     return [f.name for f in csv_files]
+
 
 def main():
     st.title("🎙️ Intern Audio Recording App")
@@ -181,6 +184,24 @@ def main():
     # Step 2: Recording Interface
     if st.session_state.csv_loaded:
         st.header("🎤 Step 2: Record Audio")
+
+        # ADD THIS: Device selector
+        st.subheader("🎧 Select Microphone (Optional)")
+        device_selector()
+    
+         # Add JavaScript to get selected device info
+        get_device_info = """
+        <script>
+        const selectedId = sessionStorage.getItem('selectedMicrophoneId');
+        const selectedLabel = sessionStorage.getItem('selectedMicrophoneLabel');
+        
+        if (selectedId && selectedLabel) {
+            // Send info back to Streamlit (optional)
+            console.log('Selected microphone:', selectedLabel);
+        }
+        </script>
+        """
+        components.html(get_device_info, height=0)
         
         total = len(st.session_state.transcriptions)
         current = st.session_state.current_index + 1
