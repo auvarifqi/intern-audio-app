@@ -1,0 +1,43 @@
+# Python-related
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# Audio recordings and data
+audio_recordings/
+csvs/
+*.m4a
+*.wav
+*.csv
+
+# IDE-related
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS-related
+.DS_Store
+Thumbs.db
