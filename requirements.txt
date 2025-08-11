@@ -2,3 +2,4 @@ streamlit
 pandas
 audio-recorder-streamlit
 pathlib
+streamlit-audiorecorder
