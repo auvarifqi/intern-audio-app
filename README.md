@@ -7,11 +7,45 @@ A Streamlit application for recording audio based on text transcriptions.
 - Record audio for each transcription
 - Save recordings with automatic numbering
 - Track progress and resume recording sessions
+- Microphone device selection
+
+## Prerequisites
+This application requires FFmpeg to be installed on your system:
+
+- **Ubuntu/Debian**: `sudo apt update && sudo apt install ffmpeg`
+- **macOS**: `brew install ffmpeg` (requires Homebrew)
+- **Windows**: Download from [ffmpeg.org](https://ffmpeg.org/download.html) or install via Chocolatey: `choco install ffmpeg`
 
 ## Setup
-1. Install requirements: `pip install -r requirements.txt`
-2. Place CSV files in the `csvs/` folder
-3. Run the app: `streamlit run app.py`
+
+### Automated Setup (Recommended)
+Use the provided setup script to create a virtual environment and install dependencies:
+
+```bash
+# Make the script executable (Unix/macOS)
+chmod +x setup.sh
+
+# Run the setup script
+./setup.sh
+```
+
+On Windows, you can use Git Bash or WSL to run the script. Example: `bash setup.sh` or `./setup.sh` in Git Bash.
+
+
+## Run the App
+After running the setup script, activate the environment and start the application:
+```bash
+# Activate the virtual environment
+source venv/bin/activate  # On macOS/Linux
+# or
+venv\Scripts\activate     # On Windows
+# or if using Conda
+conda activate audio_app  # If you created a conda environment
+
+# Run the application
+streamlit run app.py
+```
+
 
 ## CSV Format
 The CSV file should have a column named 'transcription' or 'transcriptions'.
