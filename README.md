@@ -17,6 +17,13 @@ This application requires FFmpeg to be installed on your system:
 - **Windows**: Download from [ffmpeg.org](https://ffmpeg.org/download.html) or install via Chocolatey: `choco install ffmpeg`
 
 ## Setup
+### Clone the Repository
+First, clone this repository to your local laptop:
+
+```bash
+git clone https://github.com/auvarifqi/intern-audio-app.git
+cd audio_app
+```
 
 ### Automated Setup (Recommended)
 Use the provided setup script to create a virtual environment and install dependencies:
