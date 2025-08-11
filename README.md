@@ -35,12 +35,11 @@ chmod +x setup.sh
 # Run the setup script
 ./setup.sh
 ```
-You will be prompted to fill the virtual environment, please follow the prompt.
 
 On Windows, you can use Git Bash or WSL to run the script. Example: `bash setup.sh` or `./setup.sh` in Git Bash.
 
+You will be prompted to fill the virtual environment, please follow the prompt.
 
-## Run the App
 If the setup script successful, you will see output like this in your terminal:
 ```bash
 🎉 Setup complete! Activate your environment with:
@@ -49,6 +48,8 @@ conda activate {your_env}
 📝 To run the app after activating the environment:
 streamlit run app.py
 ```
+
+## Run the App
 After running the setup script, activate the environment and start the application:
 ```bash
 # Activate the virtual environment
