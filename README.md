@@ -16,6 +16,9 @@ This application requires FFmpeg to be installed on your system:
 - **macOS**: `brew install ffmpeg` (requires Homebrew)
 - **Windows**: Download from [ffmpeg.org](https://ffmpeg.org/download.html) or install via Chocolatey: `choco install ffmpeg`
 
+## Python Version
+This application is compatible with Python 3.10. The dependencies may have issues with newer Python versions (3.13+) due to deprecated dependencies.
+
 ## Setup
 ### Clone the Repository
 First, clone this repository to your local laptop:
