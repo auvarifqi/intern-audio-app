@@ -209,7 +209,7 @@ def main():
         # Progress bar
         progress = (st.session_state.current_index) / total
         st.progress(progress)
-        st.write(f"**Progress: {len([f for f in os.listdir(st.session_state.date_folder) if f.endswith('.m4a')])}/{total} completed**")
+        st.write(f"**Progress: {len([f for f in os.listdir(st.session_state.date_folder) if f.endswith('.wav')])}/{total} completed**")
         
         # Check if all recordings are done
         if st.session_state.current_index >= total:
@@ -316,7 +316,7 @@ def main():
             st.write(f"**Date:** {os.path.basename(st.session_state.date_folder)}")
             st.write(f"**Audio Folder:** {st.session_state.date_folder}")
             st.write(f"**Total Transcriptions:** {len(st.session_state.transcriptions)}")
-            st.write(f"**Completed:** {len([f for f in os.listdir(st.session_state.date_folder) if f.endswith('.m4a')])}")
+            st.write(f"**Completed:** {len([f for f in os.listdir(st.session_state.date_folder) if f.endswith('.wav')])}")
             st.write(f"**Remaining:** {len(st.session_state.transcriptions) - st.session_state.current_index}")
         else:
             st.write("Put CSV in `csvs/` folder and select it!")
