@@ -6,6 +6,8 @@ import re
 import streamlit.components.v1 as components
 from audiorecorder import audiorecorder
 from device_selector import device_selector
+import pytz
+from datetime import datetime
 
 def extract_date_from_filename(filename):
     """
@@ -63,7 +65,15 @@ def get_csv_files():
     csv_files = list(csvs_folder.glob("*.csv"))
     return [f.name for f in csv_files]
 
-def save_csv_changes(csv_path, transcriptions, transcription_col):
+def get_timestamp_gmt7():
+    """
+    Get current timestamp in GMT+7 timezone
+    """
+    jakarta_tz = pytz.timezone('Asia/Jakarta')  # Jakarta is GMT+7
+    now = datetime.now(jakarta_tz)
+    return now.strftime("%Y-%m-%d %H:%M:%S")
+
+def save_csv_changes(csv_path, transcriptions, transcription_col, timestamp=None, index=None):
     """
     Save modified transcriptions back to CSV file
     """
@@ -72,6 +82,16 @@ def save_csv_changes(csv_path, transcriptions, transcription_col):
         df = pd.read_csv(csv_path)
         # Update the transcription column
         df[transcription_col] = transcriptions + [None] * (len(df) - len(transcriptions))
+
+        # Add timestamp column if it doesn't exist
+        if 'timestamp' not in df.columns:
+            df['timestamp'] = [None] * len(df)
+            
+        # If timestamp provided, update it at the specified index
+        if timestamp is not None and index is not None:
+            df.at[index, 'timestamp'] = timestamp
+                    
+
         # Save back to CSV
         df.to_csv(csv_path, index=False)
         return True
@@ -274,7 +294,20 @@ def main():
                     # Export and save audio
                     audio.export(audio_path, format="wav")
                     
-                    st.success(f"✅ Saved: {audio_filename}")
+                    # Get current timestamp in GMT+7
+                    current_timestamp = get_timestamp_gmt7()
+                    
+                    # Save timestamp to CSV
+                    csv_path = Path("csvs") / st.session_state.selected_csv
+                    save_csv_changes(
+                        csv_path, 
+                        st.session_state.transcriptions, 
+                        st.session_state.transcription_col,
+                        timestamp=current_timestamp,
+                        index=st.session_state.current_index
+                    )
+                    
+                    st.success(f"✅ Saved: {audio_filename} at {current_timestamp}")
                     
                     # Move to next transcription
                     st.session_state.current_index += 1
