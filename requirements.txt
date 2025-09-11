@@ -4,4 +4,3 @@ audio-recorder-streamlit
 pathlib
 streamlit-audiorecorder
 pytz
-audioop-lts
