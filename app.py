@@ -339,6 +339,19 @@ def main():
                     if key in st.session_state:
                         del st.session_state[key]
                 st.rerun()
+        
+        # New section for jumping to specific transcription
+        st.write("---")
+        st.write("📑 **Jump to specific recording:**")
+        
+        jump_col1, jump_col2 = st.columns([1, 3])
+        with jump_col1:
+            jump_number = st.number_input("Recording #:", min_value=1, max_value=total, value=current, step=1)
+        with jump_col2:
+            if st.button("🔍 Jump to Recording"):
+                # Convert from 1-based (UI) to 0-based (internal index)
+                st.session_state.current_index = jump_number - 1
+                st.rerun()
 
     # Sidebar with information
     with st.sidebar:
